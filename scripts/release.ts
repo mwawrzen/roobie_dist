@@ -41,7 +41,18 @@ async function build() {
     // 3. Budowanie Backend
     console.log("⚙️  Budowanie Backend...");
     await $`cd backend && bun build --compile --outfile ../${RELEASE_DIR}/build_server.exe ./src/server.ts`;
-    await cp("./backend/drizzle", path.join(RELEASE_DIR, "drizzle"), { recursive: true });
+
+    // BEZPIECZNE KOPIOWANIE DRIZZLE
+    const drizzleSrc = path.resolve(process.cwd(), "backend", "drizzle");
+    const drizzleDest = path.resolve(RELEASE_DIR, "drizzle");
+
+    console.log(`📂 Kopiowanie drizzle z: ${drizzleSrc} do: ${drizzleDest}`);
+
+    if (fs.existsSync(drizzleSrc)) {
+        await cp(drizzleSrc, drizzleDest, { recursive: true });
+    } else {
+        throw new Error(`KRYTYCZNY BRAK: Folder ${drizzleSrc} nie istnieje!`);
+    }
 
     // 4. Budowanie Frontend (NAPRAWA 404 I PRZEŁADOWYWANIA)
     console.log("🌐 Budowanie Frontend (Next.js)...");
