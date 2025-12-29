@@ -32,7 +32,14 @@ async function build() {
     } else if (fs.existsSync(backendEnv)) {
       envContent = await readFile(backendEnv, "utf-8");
     } else {
-      envContent = "PORT=3001\nNODE_ENV=production\nNEXT_PUBLIC_API_URL=http://localhost:3001\n";
+      envContent = `
+PORT=3001
+NODE_ENV=production
+NEXT_PUBLIC_API_URL=http://localhost:3001
+JWT_SECRET=abcdefghijklmnopqrstwxyz123456789
+APP_ADMIN_EMAIL=admin@example.com
+APP_ADMIN_PWD=admin1234
+`;
     }
 
     // Zapisujemy .env do folderu release dla Launchera
