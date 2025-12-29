@@ -39,7 +39,7 @@ jobs:
         shell: powershell
         run: |
           Start-Sleep -s 3
-          Compress-Archive -Path roobie_cms_release\* -DestinationPath RoobieCMS_Package_${{ github.ref_name }}.zip
+          Compress-Archive -Path roobie_cms_release -DestinationPath RoobieCMS_Package_${{ github.ref_name }}.zip
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
