@@ -26,8 +26,8 @@ jobs:
       - name: Install All Dependencies
         run: |
           bun install
-          cd backend && bun install
-          cd frontend && bun install
+          cd /backend && bun install
+          cd /frontend && bun install
 
       - name: Run Build & Release Script
         run: bun run scripts/release.ts
