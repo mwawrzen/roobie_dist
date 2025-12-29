@@ -1,0 +1,6 @@
+[submodule "backend"]
+	path = backend
+	url = https://github.com/mwawrzen/roobie_cms
+[submodule "frontend"]
+	path = frontend
+	url = https://github.com/mwawrzen/roobie_dashboard

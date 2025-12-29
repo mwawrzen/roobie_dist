@@ -1,0 +1,6 @@
+node_modules/
+roobie_cms_release/
+
+*.exe
+*.db
+.env
