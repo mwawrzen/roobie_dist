@@ -23,11 +23,20 @@ jobs:
         with:
           bun-version: latest
 
-      - name: Install All Dependencies
+      - name: Install Root Dependencies
+        run: bun install
+
+      - name: Install Backend Dependencies
         run: |
+          cd backend
           bun install
-          cd /backend && bun install
-          cd /frontend && bun install
+          cd ..
+
+      - name: Install Frontend Dependencies
+        run: |
+          cd frontend
+          bun install
+          cd ..
 
       - name: Run Build & Release Script
         run: bun run scripts/release.ts
