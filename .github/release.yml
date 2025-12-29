@@ -1,31 +1,56 @@
-name: Build and Release
+name: Roobie CMS Production Build
+
 on:
   push:
-    tags: ["v*"]
+    tags:
+      - 'v*'
 
 jobs:
-  build:
+  build-windows:
     runs-on: windows-latest
+    permissions:
+      contents: write
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Root Project
+        uses: actions/checkout@v4
         with:
+          token: ${{ secrets.GH_PAT }}
           submodules: recursive
 
-      - uses: oven-sh/setup-bun@v1
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
 
-      - name: Install and Build
+      - name: Install All Dependencies
         run: |
           bun install
-          bun run scripts/release.ts
+          cd backend && bun install
+          cd frontend && bun install
 
-      - name: Zip Release
-        run: Compress-Archive -Path ./roobie_cms_release/* -DestinationPath RoobieCMS_Windows.zip
+      - name: Run Build & Release Script
+        run: bun run scripts/release.ts
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:3001
+          NODE_ENV: production
+
+      - name: Bundle Artifacts
+        shell: powershell
+        run: |
+          Compress-Archive -Path roobie_cms_release\* -DestinationPath RoobieCMS_Package_${{ github.ref_name }}.zip
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
-          files: RoobieCMS_Windows.zip
+          files: RoobieCMS_Package_${{ github.ref_name }}.zip
+          name: Roobie CMS ${{ github.ref_name }}
+          body: |
+            📦 **Release**
+            - Version: ${{ github.ref_name }}
+            - System: Windows (Standalone .exe)
+            - Contains: Backend, Frontend, Launcher i Autostart skrótu.
+          draft: false
+          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
